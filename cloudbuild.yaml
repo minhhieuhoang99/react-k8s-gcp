@@ -33,11 +33,12 @@ steps:
       - '--output=output'
     id: Prepare deploy
   - name: gcr.io/cloud-builders/gsutil
+    entrypoint: sh
     args:
-      - '-c'
-      - |-
-        if [ "$_OUTPUT_BUCKET_PATH" != "" ]
-        then
+    - -c
+    - |
+      set -e
+      if [ $_OUTPUT_BUCKET_PATH ]; then
           gsutil cp -r output/suggested gs://$_OUTPUT_BUCKET_PATH/config/$_K8S_APP_NAME/$BUILD_ID/suggested
           gsutil cp -r output/expanded gs://$_OUTPUT_BUCKET_PATH/config/$_K8S_APP_NAME/$BUILD_ID/expanded
         fi
