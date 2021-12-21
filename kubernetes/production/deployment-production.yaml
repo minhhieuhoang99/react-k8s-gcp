@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: my-app-react-prod
+  name: my-app-react-prod
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      run: my-app-react-prod
+  template:
+    metadata:
+      labels:
+        run: my-app-react-prod
+    spec:
+      containers:
+      - image: gcr.io/ci-cd-gcp-k8s/my-app-react-prod:latest 
+        name: my-app-react-prod
+        ports:
+        - containerPort: 8080

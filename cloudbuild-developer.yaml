@@ -1,0 +1,45 @@
+steps:
+# Step 1
+  - name: 'asia.gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: 
+      - '-c'
+      - |
+          docker build -t asia.gcr.io/$PROJECT_ID/my-app-react-dev:latest .
+#  Step 2
+  - name: 'asia.gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: 
+      - '-c'
+      - |
+          docker push asia.gcr.io/$PROJECT_ID/my-app-react-dev:latest
+# Step 3
+  - name: 'asia.gcr.io/cloud-builders/docker' 
+    entrypoint: 'bash'
+    args: [
+    '-c', 
+    'docker pull asia.gcr.io/$PROJECT_ID/my-app-react-dev:latest || exit 0'
+    ]
+
+# Step 4
+  - name: 'asia.gcr.io/cloud-builders/kubectl'
+    args: ['apply', '-f', 'kubernetes/developer']
+    env:
+    - 'CLOUDSDK_COMPUTE_ZONE=asia-east1-a'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=gke-my-app-react'
+# Step 5
+  - name: 'asia.gcr.io/cloud-builders/kubectl'
+    args: [
+    'set', 
+    'image', 
+    'deployment', 
+    'my-app-react-dev', 
+    'my-app-react-dev=asia.gcr.io/$PROJECT_ID/my-app-react-dev:latest'
+    ]
+    env:
+    - 'CLOUDSDK_COMPUTE_ZONE=asia-east1-a'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=gke-my-app-react'
+    # Push the image to Google Container Registry with the latest tag
+images: [
+   'asia.gcr.io/$PROJECT_ID/my-app-react-dev:latest'
+  ]
